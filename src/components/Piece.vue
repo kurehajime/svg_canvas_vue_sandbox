@@ -40,9 +40,9 @@ const drawPiece = (element, canvas, number, goal) => {
     "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
     "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
   };
-  let cellSize = 300;
-  canvas.width = 300;
-  canvas.height = 300;
+  let cellSize = (500/6)*3;
+  canvas.width = (500/6)*3;
+  canvas.height = (500/6)*3;
   let ctx = canvas.getContext("2d");
   let color;
   let x = 0;
@@ -154,7 +154,6 @@ const drawPiece = (element, canvas, number, goal) => {
 export default {
   data() {
     return {
-      fill: "#99f"
     };
   },
   props: {
@@ -178,7 +177,7 @@ export default {
 };
 </script>
 <template>
-  <image :x="x" :y="y" width="100" height="100" />
+  <image :x="x" :y="y" width="83" height="83" />
 </template>
 <style scoped>
 </style>
