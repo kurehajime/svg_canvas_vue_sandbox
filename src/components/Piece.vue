@@ -15,141 +15,141 @@ const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.arc(x + r, y + r, r, Math.PI, Math.PI * 1.5, false);
   ctx.closePath();
   ctx.fill();
-}
-const drawPiece =(element,canvas,number,goal)=>{
-    const COLOR_RED = "#E60073";
-    const COLOR_BLUE = "#0099E6";
-    const COLOR_RED2 = "#E60073";
-    const COLOR_BLUE2 = "#0099E6";
-    const COLOR_WHITE = "#FFFFFF";
-    const PIECES = {
-      "1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-      "2": [1, 1, 1, 1, 0, 1, 1, 0, 1],
-      "3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-      "4": [1, 1, 1, 0, 0, 0, 1, 0, 1],
-      "5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-      "6": [1, 0, 1, 0, 0, 0, 0, 1, 0],
-      "7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-      "8": [0, 1, 0, 0, 0, 0, 0, 0, 0],
-      "-1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-      "-2": [1, 0, 1, 1, 0, 1, 1, 1, 1],
-      "-3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-      "-4": [1, 0, 1, 0, 0, 0, 1, 1, 1],
-      "-5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-      "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
-      "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-      "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
-    };
-    let cellSize = 300;
-    canvas.width = 300;
-    canvas.height = 300;
-    let ctx = canvas.getContext("2d");
-    let color;
-    let x = 0;
-    let y = 0;
+};
+const drawPiece = (element, canvas, number, goal) => {
+  const COLOR_RED = "#E60073";
+  const COLOR_BLUE = "#0099E6";
+  const COLOR_RED2 = "#E60073";
+  const COLOR_BLUE2 = "#0099E6";
+  const COLOR_WHITE = "#FFFFFF";
+  const PIECES = {
+    "1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
+    "2": [1, 1, 1, 1, 0, 1, 1, 0, 1],
+    "3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
+    "4": [1, 1, 1, 0, 0, 0, 1, 0, 1],
+    "5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
+    "6": [1, 0, 1, 0, 0, 0, 0, 1, 0],
+    "7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
+    "8": [0, 1, 0, 0, 0, 0, 0, 0, 0],
+    "-1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
+    "-2": [1, 0, 1, 1, 0, 1, 1, 1, 1],
+    "-3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
+    "-4": [1, 0, 1, 0, 0, 0, 1, 1, 1],
+    "-5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
+    "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
+    "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
+    "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
+  };
+  let cellSize = 300;
+  canvas.width = 300;
+  canvas.height = 300;
+  let ctx = canvas.getContext("2d");
+  let color;
+  let x = 0;
+  let y = 0;
 
-    // 外枠を描画
-    if (number === 0) {
-      return ctx;
-    } else if (number > 0) {
-      color = COLOR_BLUE;
-    } else {
-      color = COLOR_RED;
+  // 外枠を描画
+  if (number === 0) {
+    return ctx;
+  } else if (number > 0) {
+    color = COLOR_BLUE;
+  } else {
+    color = COLOR_RED;
+  }
+
+  let grad = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
+  grad.addColorStop(0, "rgb(255, 255, 255)");
+  grad.addColorStop(0.4, color);
+  grad.addColorStop(1, color);
+
+  ctx.shadowBlur = 10;
+  ctx.shadowColor = "rgba(0, 0, 0, 1)";
+  ctx.shadowOffsetX = 2;
+  ctx.shadowOffsetY = 2;
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  fillRoundRect(
+    ctx,
+    x + cellSize / 10,
+    y + cellSize / 10,
+    cellSize - (1 * cellSize) / 5,
+    cellSize - (1 * cellSize) / 5,
+    cellSize / 20
+  );
+
+  ctx.shadowColor = "rgba(0, 0, 0, 0)";
+  ctx.shadowBlur = 0;
+  ctx.shadowOffsetX = 0;
+  ctx.shadowOffsetY = 0;
+
+  // // 曇りエフェクト
+  // if (img_bk_loaded) {
+  //   ctx.globalAlpha = 0.35;
+  //   ctx.save();
+  //   ctx.clip();
+  //     ctx.drawImage(
+  //       drawBk(true),
+  //       x + cellSize / 10,
+  //       y + cellSize / 10,
+  //       cellSize - (1 * cellSize) / 5,
+  //       cellSize - (1 * cellSize) / 5
+  //     );
+  //   ctx.restore();
+  //   ctx.globalAlpha = 1;
+  // }
+
+  // 文字を描画。
+  ctx.fillStyle = COLOR_WHITE;
+
+  let fontsize = Math.round(cellSize * 0.18);
+  ctx.textBaseline = "middle";
+  ctx.textAlign = "center";
+  ctx.font = fontsize + "pt 'Play',Arial";
+  ctx.beginPath();
+
+  // 数字を印字
+  ctx.fillText(Math.abs(number), x + cellSize / 2, y + cellSize / 2);
+
+  // 点を描画
+  for (let i = 0; i <= PIECES[number].length - 1; i++) {
+    if (PIECES[number][i] === 0) {
+      continue;
     }
+    let x_dot =
+      x +
+      cellSize / 4.16 +
+      (Math.floor(cellSize - (1 * cellSize) / 5) / 3) * Math.floor(i % 3.0);
+    let y_dot =
+      y +
+      cellSize / 4.16 +
+      (Math.floor(cellSize - (1 * cellSize) / 5) / 3) * Math.floor(i / 3.0);
 
-    let grad = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
-    grad.addColorStop(0, "rgb(255, 255, 255)");
-    grad.addColorStop(0.4, color);
-    grad.addColorStop(1, color);
-
-    ctx.shadowBlur = 10;
-    ctx.shadowColor = "rgba(0, 0, 0, 1)";
-    ctx.shadowOffsetX = 2;
-    ctx.shadowOffsetY = 2;
-    ctx.fillStyle = grad;
-    ctx.beginPath();
-    fillRoundRect(
-      ctx,
-      x + cellSize / 10,
-      y + cellSize / 10,
-      cellSize - (1 * cellSize) / 5,
-      cellSize - (1 * cellSize) / 5,
-      cellSize / 20
-    );
-
-    ctx.shadowColor = "rgba(0, 0, 0, 0)";
-    ctx.shadowBlur = 0;
-    ctx.shadowOffsetX = 0;
-    ctx.shadowOffsetY = 0;
-
-    // // 曇りエフェクト
-    // if (img_bk_loaded) {
-    //   ctx.globalAlpha = 0.35;
-    //   ctx.save();
-    //   ctx.clip();
-    //     ctx.drawImage(
-    //       drawBk(true),
-    //       x + cellSize / 10,
-    //       y + cellSize / 10,
-    //       cellSize - (1 * cellSize) / 5,
-    //       cellSize - (1 * cellSize) / 5
-    //     );
-    //   ctx.restore();
-    //   ctx.globalAlpha = 1;
-    // }
-
-    // 文字を描画。
     ctx.fillStyle = COLOR_WHITE;
 
-    let fontsize = Math.round(cellSize * 0.18);
+    ctx.beginPath();
+    ctx.arc(x_dot, y_dot, cellSize * 0.06, 0, Math.PI * 2, false);
+    ctx.fill();
+  }
+
+  if (goal) {
+    // 得点を印字
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = "rgba(0, 0, 0, 1)";
+    ctx.globalAlpha = 1;
+    ctx.fillStyle = COLOR_WHITE;
+    fontsize = Math.round(cellSize * 0.5);
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
-    ctx.font = fontsize + "pt 'Play',Arial";
+    ctx.font = "bolder " + fontsize + "pt Play,Arial ";
     ctx.beginPath();
-
-    // 数字を印字
     ctx.fillText(Math.abs(number), x + cellSize / 2, y + cellSize / 2);
+    ctx.globalAlpha = 1;
+    ctx.shadowColor = "rgba(0, 0, 0, 0)";
+    ctx.shadowBlur = 0;
+  }
 
-    // 点を描画
-    for (let i = 0; i <= PIECES[number].length - 1; i++) {
-      if (PIECES[number][i] === 0) {
-        continue;
-      }
-      let x_dot =
-        x +
-        cellSize / 4.16 +
-        (Math.floor(cellSize - (1 * cellSize) / 5) / 3) * Math.floor(i % 3.0);
-      let y_dot =
-        y +
-        cellSize / 4.16 +
-        (Math.floor(cellSize - (1 * cellSize) / 5) / 3) * Math.floor(i / 3.0);
-
-      ctx.fillStyle = COLOR_WHITE;
-
-      ctx.beginPath();
-      ctx.arc(x_dot, y_dot, cellSize * 0.06, 0, Math.PI * 2, false);
-      ctx.fill();
-    }
-
-    if (goal) {
-      // 得点を印字
-      ctx.shadowBlur = 10;
-      ctx.shadowColor = "rgba(0, 0, 0, 1)";
-      ctx.globalAlpha = 1;
-      ctx.fillStyle = COLOR_WHITE;
-      fontsize = Math.round(cellSize * 0.5);
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
-      ctx.font = "bolder " + fontsize + "pt Play,Arial ";
-      ctx.beginPath();
-      ctx.fillText(Math.abs(number), x + cellSize / 2, y + cellSize / 2);
-      ctx.globalAlpha = 1;
-      ctx.shadowColor = "rgba(0, 0, 0, 0)";
-      ctx.shadowBlur = 0;
-    }
-
-    element.setAttribute("href", canvas.toDataURL());
-}
+  element.setAttribute("href", canvas.toDataURL());
+};
 
 export default {
   data() {
@@ -160,15 +160,21 @@ export default {
   props: {
     x: Number,
     y: Number,
-    number:Number,
+    number: Number,
+    goal: Boolean,
   },
   mounted() {
-      drawPiece(this.$el,canvas,this.number,false);
+    drawPiece(this.$el, canvas, this.number, this.goal);
   },
-  updated(){
-      drawPiece(this.$el,canvas,this.number,false);
+  updated() {
+    //
   },
-  components: []
+  watch: {
+    // この関数は question が変わるごとに実行されます。
+    goal: function(newGoal, oldGoal) {
+      drawPiece(this.$el, canvas, this.number, this.goal);
+    }
+  }
 };
 </script>
 <template>
