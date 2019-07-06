@@ -2,19 +2,20 @@
 
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 module.exports = {
   // エントリポイントのファイル
   entry: './src/index.js',
   output: {
     // 出力先のディレクトリ
-    path: path.resolve(__dirname, './doc'),
+    path: path.resolve(__dirname, './docs'),
     // 出力ファイル名
     filename: 'bundle.js'
   },
   devServer: {
     // webpackの扱わないファイル(HTMLや画像など)が入っているディレクトリ
-    contentBase: path.resolve(__dirname, './doc')
+    contentBase: path.resolve(__dirname, './docs')
   },
   module: {
     rules: [
@@ -40,5 +41,15 @@ module.exports = {
       vue$: 'vue/dist/vue.esm.js',
     },
   },
-  plugins: [new VueLoaderPlugin()],
+  plugins: [
+    new VueLoaderPlugin(),
+    new CopyWebpackPlugin(
+      [
+        {
+          from: './',
+          to: '',
+        },
+      ],
+      { context: 'assets' }
+    ),],
 }
