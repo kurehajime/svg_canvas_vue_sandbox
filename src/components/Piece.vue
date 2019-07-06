@@ -1,6 +1,8 @@
 <script>
+let canvas = document.createElement("canvas");
+
 // 角丸
-function fillRoundRect(ctx, x, y, w, h, r) {
+const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.beginPath();
   ctx.moveTo(x + r, y);
   ctx.lineTo(x + w - r, y);
@@ -14,18 +16,7 @@ function fillRoundRect(ctx, x, y, w, h, r) {
   ctx.closePath();
   ctx.fill();
 }
-export default {
-  data() {
-    return {
-      fill: "#99f"
-    };
-  },
-  props: {
-    x: Number,
-    y: Number,
-    number:Number,
-  },
-  mounted() {
+const drawPiece =(element,canvas,number,goal)=>{
     const COLOR_RED = "#E60073";
     const COLOR_BLUE = "#0099E6";
     const COLOR_RED2 = "#E60073";
@@ -50,13 +41,10 @@ export default {
       "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
     };
     let cellSize = 300;
-    let canvas = document.createElement("canvas");
-    let goal = false;
     canvas.width = 300;
     canvas.height = 300;
     let ctx = canvas.getContext("2d");
     let color;
-    let number = this.number;
     let x = 0;
     let y = 0;
 
@@ -160,7 +148,25 @@ export default {
       ctx.shadowBlur = 0;
     }
 
-    this.$el.setAttribute("href", canvas.toDataURL());
+    element.setAttribute("href", canvas.toDataURL());
+}
+
+export default {
+  data() {
+    return {
+      fill: "#99f"
+    };
+  },
+  props: {
+    x: Number,
+    y: Number,
+    number:Number,
+  },
+  mounted() {
+      drawPiece(this.$el,canvas,this.number,false);
+  },
+  updated(){
+      drawPiece(this.$el,canvas,this.number,false);
   },
   components: []
 };

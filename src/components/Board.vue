@@ -20,7 +20,7 @@ export default {
 <template>
   <svg width ="500" height="500">
     <text x="0" y="10" font-size="10" :fill="fill">あいうえお</text>
-    <piece v-for="p in pieces" v-bind:key="p.id" v-bind:x="p.x" v-bind:y="p.y" v-bind:number="p.number" />
+    <piece v-for="p in pieces" :key="p.id" :x="p.x" :y="p.y" :number="p.number" />
   </svg>
 </template>
 <style scoped>
