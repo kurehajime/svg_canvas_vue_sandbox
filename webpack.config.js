@@ -12,10 +12,6 @@ module.exports = {
     // 出力ファイル名
     filename: 'bundle.js'
   },
-  devServer: {
-    // webpackの扱わないファイル(HTMLや画像など)が入っているディレクトリ
-    contentBase: path.resolve(__dirname, 'public')
-  },
   module: {
     rules: [
       {
