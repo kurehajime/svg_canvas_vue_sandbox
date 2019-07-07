@@ -1,8 +1,8 @@
 <script>
+import Params from "../Params";
+
 let canvas = document.createElement("canvas");
 let canv_bk = document.createElement("canvas");
-let RATIO=1;
-let CANV_SIZE=500*RATIO;
 // 角丸
 const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.beginPath();
@@ -19,32 +19,9 @@ const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.fill();
 };
 const drawPiece1 = (element, canvas, number, goal,img_bk) => {
-  const COLOR_RED = "#E60073";
-  const COLOR_BLUE = "#0099E6";
-  const COLOR_RED2 = "#E60073";
-  const COLOR_BLUE2 = "#0099E6";
-  const COLOR_WHITE = "#FFFFFF";
-  const PIECES = {
-    "1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-    "2": [1, 1, 1, 1, 0, 1, 1, 0, 1],
-    "3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-    "4": [1, 1, 1, 0, 0, 0, 1, 0, 1],
-    "5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-    "6": [1, 0, 1, 0, 0, 0, 0, 1, 0],
-    "7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-    "8": [0, 1, 0, 0, 0, 0, 0, 0, 0],
-    "-1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-    "-2": [1, 0, 1, 1, 0, 1, 1, 1, 1],
-    "-3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-    "-4": [1, 0, 1, 0, 0, 0, 1, 1, 1],
-    "-5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-    "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
-    "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-    "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
-  };
-  let cellSize = (500 / 6) * 3;
-  canvas.width = (500 / 6) * 3;
-  canvas.height = (500 / 6) * 3;
+  let cellSize = (Params.CANV_SIZE / 6) * 3;
+  canvas.width = (Params.CANV_SIZE / 6) * 3;
+  canvas.height = (Params.CANV_SIZE / 6) * 3;
   let ctx = canvas.getContext("2d");
   let color;
   let x = 0;
@@ -54,9 +31,9 @@ const drawPiece1 = (element, canvas, number, goal,img_bk) => {
   if (number === 0) {
     return ctx;
   } else if (number > 0) {
-    color = COLOR_BLUE;
+    color = Params.COLOR_BLUE;
   } else {
-    color = COLOR_RED;
+    color = Params.COLOR_RED;
   }
 
   let grad = ctx.createLinearGradient(x, y, x + cellSize, y + cellSize);
@@ -103,38 +80,15 @@ const drawPiece1 = (element, canvas, number, goal,img_bk) => {
 };
 
 const drawPiece2 = (element, canvas, number, goal) => {
-  const COLOR_RED = "#E60073";
-  const COLOR_BLUE = "#0099E6";
-  const COLOR_RED2 = "#E60073";
-  const COLOR_BLUE2 = "#0099E6";
-  const COLOR_WHITE = "#FFFFFF";
-  const PIECES = {
-    "1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-    "2": [1, 1, 1, 1, 0, 1, 1, 0, 1],
-    "3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-    "4": [1, 1, 1, 0, 0, 0, 1, 0, 1],
-    "5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-    "6": [1, 0, 1, 0, 0, 0, 0, 1, 0],
-    "7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-    "8": [0, 1, 0, 0, 0, 0, 0, 0, 0],
-    "-1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
-    "-2": [1, 0, 1, 1, 0, 1, 1, 1, 1],
-    "-3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
-    "-4": [1, 0, 1, 0, 0, 0, 1, 1, 1],
-    "-5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
-    "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
-    "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
-    "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
-  };
-  let cellSize = (500 / 6) * 3;
-  canvas.width = (500 / 6) * 3;
-  canvas.height = (500 / 6) * 3;
+  let cellSize = (Params.CANV_SIZE / 6)*3;
+  canvas.width = (Params.CANV_SIZE / 6)*3;
+  canvas.height = (Params.CANV_SIZE / 6)*3;
   let ctx = canvas.getContext("2d");
   let color;
   let x = 0;
   let y = 0;
   // 文字を描画。
-  ctx.fillStyle = COLOR_WHITE;
+  ctx.fillStyle = Params.COLOR_WHITE;
 
   let fontsize = Math.round(cellSize * 0.18);
   ctx.textBaseline = "middle";
@@ -146,8 +100,8 @@ const drawPiece2 = (element, canvas, number, goal) => {
   ctx.fillText(Math.abs(number), x + cellSize / 2, y + cellSize / 2);
 
   // 点を描画
-  for (let i = 0; i <= PIECES[number].length - 1; i++) {
-    if (PIECES[number][i] === 0) {
+  for (let i = 0; i <= Params.PIECES[number].length - 1; i++) {
+    if (Params.PIECES[number][i] === 0) {
       continue;
     }
     let x_dot =
@@ -159,7 +113,7 @@ const drawPiece2 = (element, canvas, number, goal) => {
       cellSize / 4.16 +
       (Math.floor(cellSize - (1 * cellSize) / 5) / 3) * Math.floor(i / 3.0);
 
-    ctx.fillStyle = COLOR_WHITE;
+    ctx.fillStyle = Params.COLOR_WHITE;
 
     ctx.beginPath();
     ctx.arc(x_dot, y_dot, cellSize * 0.06, 0, Math.PI * 2, false);
@@ -171,7 +125,7 @@ const drawPiece2 = (element, canvas, number, goal) => {
     ctx.shadowBlur = 10;
     ctx.shadowColor = "rgba(0, 0, 0, 1)";
     ctx.globalAlpha = 1;
-    ctx.fillStyle = COLOR_WHITE;
+    ctx.fillStyle = Params.COLOR_WHITE;
     fontsize = Math.round(cellSize * 0.5);
     ctx.textBaseline = "middle";
     ctx.textAlign = "center";
@@ -191,12 +145,12 @@ const drawBk = (img_bk) => {
     img_bk,
     0,
     0,
-    CANV_SIZE / RATIO,
-    CANV_SIZE / RATIO,
+    Params.CANV_SIZE / Params.RATIO,
+    Params.CANV_SIZE / Params.RATIO,
     0,
     0,
-    CANV_SIZE,
-    CANV_SIZE
+    Params.CANV_SIZE,
+    Params.CANV_SIZE
   );
   return canv_bk;
 };

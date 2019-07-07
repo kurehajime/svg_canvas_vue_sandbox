@@ -1,6 +1,7 @@
 <script>
 import Piece from "./Piece";
 import BackGround from "./BackGround";
+import Params from "../Params";
 
 const PointToCellNumber = (width, height, x, y) => {
   let cellSize = width / 6;
@@ -110,14 +111,14 @@ export default {
       0,
       1
     ];
-    let pieces = MapToPieces(500,500,map);
+    let pieces = MapToPieces(Params.CANV_SIZE,Params.CANV_SIZE,map);
     return {
       fill: "#123456",
       title: "hello",
       board_x: 0,
       board_y: 0,
-      board_w: 500,
-      board_h: 500,
+      board_w: Params.CANV_SIZE,
+      board_h: Params.CANV_SIZE,
       pieces :pieces,
       // pieces: [
       //   { number: 1, x: 10, y: 15, goal: false, display: "inline" },
@@ -147,7 +148,7 @@ export default {
 };
 </script>
 <template>
-  <svg width="500" height="500" @mousedown="clicked($event)">
+  <svg :width="board_w" :height="board_h" @mousedown="clicked($event)">
     <backGround :x="board_x" :y="board_y" :w="board_w" :h="board_h" />
     <text x="0" y="10" font-size="10" :fill="fill">あいうえお</text>
     <piece
