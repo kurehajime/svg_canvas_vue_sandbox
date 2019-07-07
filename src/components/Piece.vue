@@ -1,6 +1,8 @@
 <script>
 let canvas = document.createElement("canvas");
-
+let canv_bk = document.createElement("canvas");
+let RATIO=1;
+let CANV_SIZE=500*RATIO;
 // 角丸
 const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.beginPath();
@@ -16,7 +18,7 @@ const fillRoundRect = (ctx, x, y, w, h, r) => {
   ctx.closePath();
   ctx.fill();
 };
-const drawPiece = (element, canvas, number, goal) => {
+const drawPiece1 = (element, canvas, number, goal,img_bk) => {
   const COLOR_RED = "#E60073";
   const COLOR_BLUE = "#0099E6";
   const COLOR_RED2 = "#E60073";
@@ -40,9 +42,9 @@ const drawPiece = (element, canvas, number, goal) => {
     "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
     "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
   };
-  let cellSize = (500/6)*3;
-  canvas.width = (500/6)*3;
-  canvas.height = (500/6)*3;
+  let cellSize = (500 / 6) * 3;
+  canvas.width = (500 / 6) * 3;
+  canvas.height = (500 / 6) * 3;
   let ctx = canvas.getContext("2d");
   let color;
   let x = 0;
@@ -82,22 +84,55 @@ const drawPiece = (element, canvas, number, goal) => {
   ctx.shadowOffsetX = 0;
   ctx.shadowOffsetY = 0;
 
-  // // 曇りエフェクト
-  // if (img_bk_loaded) {
-  //   ctx.globalAlpha = 0.35;
-  //   ctx.save();
-  //   ctx.clip();
-  //     ctx.drawImage(
-  //       drawBk(true),
-  //       x + cellSize / 10,
-  //       y + cellSize / 10,
-  //       cellSize - (1 * cellSize) / 5,
-  //       cellSize - (1 * cellSize) / 5
-  //     );
-  //   ctx.restore();
-  //   ctx.globalAlpha = 1;
-  // }
+  // 曇りエフェクト
+  if (img_bk!=null) {
+    ctx.globalAlpha = 0.35;
+    ctx.save();
+    ctx.clip();
+    ctx.drawImage(
+      drawBk(img_bk),
+      x + cellSize / 10,
+      y + cellSize / 10,
+      cellSize - (1 * cellSize) / 5,
+      cellSize - (1 * cellSize) / 5
+    );
+    ctx.restore();
+    ctx.globalAlpha = 1;
+  }
+  element.setAttribute("href", canvas.toDataURL());
+};
 
+const drawPiece2 = (element, canvas, number, goal) => {
+  const COLOR_RED = "#E60073";
+  const COLOR_BLUE = "#0099E6";
+  const COLOR_RED2 = "#E60073";
+  const COLOR_BLUE2 = "#0099E6";
+  const COLOR_WHITE = "#FFFFFF";
+  const PIECES = {
+    "1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
+    "2": [1, 1, 1, 1, 0, 1, 1, 0, 1],
+    "3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
+    "4": [1, 1, 1, 0, 0, 0, 1, 0, 1],
+    "5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
+    "6": [1, 0, 1, 0, 0, 0, 0, 1, 0],
+    "7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
+    "8": [0, 1, 0, 0, 0, 0, 0, 0, 0],
+    "-1": [1, 1, 1, 1, 0, 1, 1, 1, 1],
+    "-2": [1, 0, 1, 1, 0, 1, 1, 1, 1],
+    "-3": [1, 1, 1, 0, 0, 0, 1, 1, 1],
+    "-4": [1, 0, 1, 0, 0, 0, 1, 1, 1],
+    "-5": [1, 0, 1, 0, 0, 0, 1, 0, 1],
+    "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
+    "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
+    "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
+  };
+  let cellSize = (500 / 6) * 3;
+  canvas.width = (500 / 6) * 3;
+  canvas.height = (500 / 6) * 3;
+  let ctx = canvas.getContext("2d");
+  let color;
+  let x = 0;
+  let y = 0;
   // 文字を描画。
   ctx.fillStyle = COLOR_WHITE;
 
@@ -147,38 +182,67 @@ const drawPiece = (element, canvas, number, goal) => {
     ctx.shadowColor = "rgba(0, 0, 0, 0)";
     ctx.shadowBlur = 0;
   }
-
   element.setAttribute("href", canvas.toDataURL());
-};
+}
 
+const drawBk = (img_bk) => {
+  let ctx_bk = canv_bk.getContext("2d");
+  ctx_bk.drawImage(
+    img_bk,
+    0,
+    0,
+    CANV_SIZE / RATIO,
+    CANV_SIZE / RATIO,
+    0,
+    0,
+    CANV_SIZE,
+    CANV_SIZE
+  );
+  return canv_bk;
+};
 export default {
   data() {
-    return {
-    };
+    return {};
   },
   props: {
     x: Number,
     y: Number,
     number: Number,
     goal: Boolean,
-    display : String,
+    display: String
   },
   mounted() {
-    drawPiece(this.$el, canvas, this.number, this.goal);
+    let img_bk = new Image();
+    img_bk.src = './bk.gif';
+    drawPiece1(this.$el.querySelector(".piece1"), canvas, this.number, this.goal);
+    drawPiece2(this.$el.querySelector(".piece2"), canvas, this.number, this.goal);
+
+    // 背景画像の読み込みが完了したら再実行
+    img_bk.onload =() => {
+      drawPiece1(this.$el.querySelector(".piece1"), canvas, this.number, this.goal,img_bk);
+    };
+    if (img_bk.width !== 0) {
+      drawPiece1(this.$el.querySelector(".piece1"), canvas, this.number, this.goal,img_bk);
+    }
   },
   updated() {
     //
   },
   watch: {
-    // この関数は question が変わるごとに実行されます。
     goal: function(newGoal, oldGoal) {
-      drawPiece(this.$el, canvas, this.number, this.goal);
+      drawPiece2(this.$el.querySelector(".piece2"), canvas, this.number, this.goal);
     }
   }
 };
 </script>
 <template>
-  <image :x="x" :y="y" width="83" height="83" :display="display" />
+  <g>
+    <image class = "piece1" :x="x" :y="y" width="83" height="83" :display="display" />
+    <image class = "piece2" :x="x" :y="y" width="83" height="83" :display="display" />
+  </g>
 </template>
 <style scoped>
+.piecebg{
+  opacity: 0.35;
+}
 </style>

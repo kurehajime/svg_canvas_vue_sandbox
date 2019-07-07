@@ -50,6 +50,6 @@ module.exports = {
           to: '',
         },
       ],
-      { context: 'assets' }
+      { context: 'static' }
     ),],
 }
