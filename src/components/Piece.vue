@@ -161,6 +161,7 @@ export default {
     y: Number,
     number: Number,
     goal: Boolean,
+    display : String,
   },
   mounted() {
     drawPiece(this.$el, canvas, this.number, this.goal);
@@ -177,7 +178,7 @@ export default {
 };
 </script>
 <template>
-  <image :x="x" :y="y" width="83" height="83" />
+  <image :x="x" :y="y" width="83" height="83" :display="display" />
 </template>
 <style scoped>
 </style>
