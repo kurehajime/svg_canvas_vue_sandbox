@@ -35,7 +35,7 @@ const MapToPieces = (width, height, map) => {
     for (let p = 0; p < pieces.length; p++) {
       if (pieces[p].number == map[m]) {
         pieces[p].display = "inline";
-        let {x,y} = CellNumberToPoint(width, height, m);
+        let { x, y } = CellNumberToPoint(width, height, m);
         pieces[p].x = x;
         pieces[p].y = y;
         let yy = ~~(m % 10);
@@ -53,65 +53,7 @@ const MapToPieces = (width, height, map) => {
 export default {
   components: { Piece, BackGround },
   data() {
-    let map = [
-      -1,
-      0,
-      0,
-      0,
-      0,
-      6,
-      0,
-      0,
-      0,
-      0,
-      -2,
-      -8,
-      0,
-      0,
-      7,
-      5,
-      0,
-      0,
-      0,
-      0,
-      -3,
-      0,
-      0,
-      0,
-      0,
-      4,
-      0,
-      0,
-      0,
-      0,
-      -4,
-      0,
-      0,
-      0,
-      0,
-      3,
-      0,
-      0,
-      0,
-      0,
-      -5,
-      -7,
-      0,
-      0,
-      8,
-      2,
-      0,
-      0,
-      0,
-      0,
-      -6,
-      0,
-      0,
-      0,
-      0,
-      1
-    ];
-    let pieces = MapToPieces(Params.CANV_SIZE,Params.CANV_SIZE,map);
+    let pieces = MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, this.map);
     return {
       fill: "#123456",
       title: "hello",
@@ -119,14 +61,16 @@ export default {
       board_y: 0,
       board_w: Params.CANV_SIZE,
       board_h: Params.CANV_SIZE,
-      pieces :pieces,
-      // pieces: [
-      //   { number: 1, x: 10, y: 15, goal: false, display: "inline" },
-      //   { number: -2, x: 110, y: 115, goal: false, display: "inline" },
-      //   { number: 3, x: 210, y: 215, goal: false, display: "inline" },
-      //   { number: -4, x: 310, y: 315, goal: true, display: "none" }
-      // ]
+      pieces: pieces
     };
+  },
+  props: {
+    map: Array
+  },
+  watch: {
+    map: function(newMap, oldMap) {
+      this.pieces = MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, newMap);
+    }
   },
   methods: {
     clicked: function(e) {

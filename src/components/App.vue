@@ -1,18 +1,41 @@
 <script>
-import Counter from './Counter'
+import Board from './Board'
 
+const shuffleBoard = ()=> {
+    let map = [];
+    for (let num in map) {
+      map[num] = 0;
+    }
+    let arr = [1, 2, 3, 4, 5, 6, 7, 8];
+    let red_num = [0, 10, 20, 30, 40, 50, 11, 41];
+    let blue_num = [55, 45, 35, 25, 15, 5, 44, 14];
+    for (let i = arr.length - 1; i >= 0; i--) {
+      let r = Math.floor(Math.random() * (i + 1));
+      let tmp = arr[i];
+      arr[i] = arr[r];
+      arr[r] = tmp;
+    }
+    for (let num in blue_num) {
+      map[blue_num[num]] = arr[num];
+    }
+    for (let num in red_num) {
+      map[red_num[num]] = -1 * arr[num];
+    }
+    return map;
+  }
 export default {
-  components: {Counter},
+  components: {Board},
+  data() {
+   return {
+     map: shuffleBoard(),
+    }
+  },
+  methods: {
+  }
 }
 </script>
 <template>
-  <div>
-    <p>Hello, World!</p>
-    <counter/>
-  </div>
+  <board :map = "map"/>
 </template>
 <style scoped>
-  * {
-    border: 1px solid red;
-  }
 </style>
