@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "webpack --devtool source-map",
+    "build": "webpack --devtool source-map --mode=development",
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "webpack-dev-server --hot --open-page index.html"
   },
