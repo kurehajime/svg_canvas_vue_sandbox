@@ -2,17 +2,7 @@
 import Piece from "./Piece";
 import BackGround from "./BackGround";
 import Params from "../Params";
-
-const PointToCellNumber = (width, height, x, y) => {
-  let cellSize = width / 6;
-  return Math.floor(x / cellSize) * 10 + Math.floor(y / cellSize);
-};
-const CellNumberToPoint = (width, height, cellNumber) => {
-  let cellSize = width / 6;
-  let x = ~~(cellNumber / 10) * cellSize;
-  let y = ~~(cellNumber % 10) * cellSize;
-  return { x, y };
-};
+import Utils from "../Utils";
 
 const MakePieces = () => {
   const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
@@ -35,7 +25,7 @@ const MapToPieces = (width, height, map) => {
     for (let p = 0; p < pieces.length; p++) {
       if (pieces[p].number == map[m]) {
         pieces[p].display = "inline";
-        let { x, y } = CellNumberToPoint(width, height, m);
+        let { x, y } = Utils.CellNumberToPoint(width, height, m);
         pieces[p].x = x;
         pieces[p].y = y;
         let yy = ~~(m % 10);
@@ -61,7 +51,8 @@ export default {
       board_y: 0,
       board_w: Params.CANV_SIZE,
       board_h: Params.CANV_SIZE,
-      pieces: pieces
+      pieces: pieces,
+      hover : [],
     };
   },
   props: {
@@ -74,29 +65,55 @@ export default {
   },
   methods: {
     clicked: function(e) {
-      let cellNumber = PointToCellNumber(
+      let cellNumber = Utils.PointToCellNumber(
         this.$el.getBoundingClientRect().width,
         this.$el.getBoundingClientRect().height,
         e.offsetX,
         e.offsetY
       );
-      let { x, y } = CellNumberToPoint(
+      // let { x, y } = Utils.CellNumberToPoint(
+      //   this.$el.getBoundingClientRect().width,
+      //   this.$el.getBoundingClientRect().height,
+      //   cellNumber
+      // );
+      // this.pieces[0].x = x;
+      // this.pieces[0].y = y;
+      this.$emit('clickCell',cellNumber);
+    },
+    mousemove: function(e){
+      if(this.hover.length == 0){
+        return;
+      }
+
+      let cellNumber = Utils.PointToCellNumber(
         this.$el.getBoundingClientRect().width,
         this.$el.getBoundingClientRect().height,
-        cellNumber
+        e.offsetX,
+        e.offsetY
       );
-      this.pieces[0].x = x;
-      this.pieces[0].y = y;
+      console.log(cellNumber);
     }
   }
 };
 </script>
 <template>
-  <svg :width="board_w" :height="board_h" @mousedown="clicked($event)">
+  <svg :width="board_w" :height="board_h" 
+  @mousedown="clicked($event)"
+  @mousemove="mousemove($event)">
     <backGround :x="board_x" :y="board_y" :w="board_w" :h="board_h" />
-    <text x="0" y="10" font-size="10" :fill="fill">あいうえお</text>
+    <!-- map -->
     <piece
       v-for="p in pieces"
+      :key="p.number"
+      :x="p.x"
+      :y="p.y"
+      :number="p.number"
+      :goal="p.goal"
+      :display="p.display"
+    />
+    <!-- hover -->
+    <piece
+      v-for="p in hover"
       :key="p.number"
       :x="p.x"
       :y="p.y"
