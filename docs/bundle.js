@@ -96,36 +96,8 @@
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Board__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Board */ "./src/components/Board.vue");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Utils */ "./src/Utils.js");
 
-
-const shuffleBoard = () => {
-  let map = [];
-
-  for (let num in map) {
-    map[num] = 0;
-  }
-
-  let arr = [1, 2, 3, 4, 5, 6, 7, 8];
-  let red_num = [0, 10, 20, 30, 40, 50, 11, 41];
-  let blue_num = [55, 45, 35, 25, 15, 5, 44, 14];
-
-  for (let i = arr.length - 1; i >= 0; i--) {
-    let r = Math.floor(Math.random() * (i + 1));
-    let tmp = arr[i];
-    arr[i] = arr[r];
-    arr[r] = tmp;
-  }
-
-  for (let num in blue_num) {
-    map[blue_num[num]] = arr[num];
-  }
-
-  for (let num in red_num) {
-    map[red_num[num]] = -1 * arr[num];
-  }
-
-  return map;
-};
 
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
@@ -134,11 +106,23 @@ const shuffleBoard = () => {
 
   data() {
     return {
-      map: shuffleBoard()
+      map: _Utils__WEBPACK_IMPORTED_MODULE_1__["default"].ShuffleBoard()
     };
   },
 
-  methods: {}
+  methods: {
+    clickCell(cellNumber) {
+      console.log(cellNumber);
+      let {
+        x,
+        y
+      } = _Utils__WEBPACK_IMPORTED_MODULE_1__["default"].CellNumberToPoint(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, cellNumber); // this.map[0].x = x;
+      // this.map[0].y = y;
+
+      console.log(this.map);
+    }
+
+  }
 });
 
 /***/ }),
@@ -243,44 +227,14 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Piece__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Piece */ "./src/components/Piece.vue");
 /* harmony import */ var _BackGround__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./BackGround */ "./src/components/BackGround.vue");
 /* harmony import */ var _Params__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Params */ "./src/Params.js");
+/* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Utils */ "./src/Utils.js");
 
 
 
 
-const PointToCellNumber = (width, height, x, y) => {
-  let cellSize = width / 6;
-  return Math.floor(x / cellSize) * 10 + Math.floor(y / cellSize);
-};
-
-const CellNumberToPoint = (width, height, cellNumber) => {
-  let cellSize = width / 6;
-  let x = ~~(cellNumber / 10) * cellSize;
-  let y = ~~(cellNumber % 10) * cellSize;
-  return {
-    x,
-    y
-  };
-};
-
-const MakePieces = () => {
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
-  let pieces = [];
-
-  for (const i of numbers) {
-    pieces.push({
-      number: i,
-      x: 0,
-      y: 0,
-      goal: false,
-      display: "none"
-    });
-  }
-
-  return pieces;
-};
 
 const MapToPieces = (width, height, map) => {
-  let pieces = MakePieces();
+  let pieces = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MakePieces();
 
   for (let m = 0; m < map.length; m++) {
     for (let p = 0; p < pieces.length; p++) {
@@ -289,7 +243,7 @@ const MapToPieces = (width, height, map) => {
         let {
           x,
           y
-        } = CellNumberToPoint(width, height, m);
+        } = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].CellNumberToPoint(width, height, m);
         pieces[p].x = x;
         pieces[p].y = y;
         let yy = ~~(m % 10);
@@ -321,7 +275,8 @@ const MapToPieces = (width, height, map) => {
       board_y: 0,
       board_w: _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE,
       board_h: _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE,
-      pieces: pieces
+      pieces: pieces,
+      hover: []
     };
   },
 
@@ -335,13 +290,23 @@ const MapToPieces = (width, height, map) => {
   },
   methods: {
     clicked: function (e) {
-      let cellNumber = PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, e.offsetX, e.offsetY);
-      let {
-        x,
-        y
-      } = CellNumberToPoint(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, cellNumber);
-      this.pieces[0].x = x;
-      this.pieces[0].y = y;
+      let cellNumber = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, e.offsetX, e.offsetY); // let { x, y } = Utils.CellNumberToPoint(
+      //   this.$el.getBoundingClientRect().width,
+      //   this.$el.getBoundingClientRect().height,
+      //   cellNumber
+      // );
+      // this.pieces[0].x = x;
+      // this.pieces[0].y = y;
+
+      this.$emit('clickCell', cellNumber);
+    },
+    mousemove: function (e) {
+      if (this.hover.length == 0) {
+        return;
+      }
+
+      let cellNumber = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, e.offsetX, e.offsetY);
+      console.log(cellNumber);
     }
   }
 });
@@ -1148,7 +1113,10 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("board", { attrs: { map: _vm.map } })
+  return _c("board", {
+    attrs: { map: _vm.map },
+    on: { clickCell: _vm.clickCell }
+  })
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -1211,6 +1179,9 @@ var render = function() {
       on: {
         mousedown: function($event) {
           return _vm.clicked($event)
+        },
+        mousemove: function($event) {
+          return _vm.mousemove($event)
         }
       }
     },
@@ -1224,13 +1195,20 @@ var render = function() {
         }
       }),
       _vm._v(" "),
-      _c(
-        "text",
-        { attrs: { x: "0", y: "10", "font-size": "10", fill: _vm.fill } },
-        [_vm._v("あいうえお")]
-      ),
-      _vm._v(" "),
       _vm._l(_vm.pieces, function(p) {
+        return _c("piece", {
+          key: p.number,
+          attrs: {
+            x: p.x,
+            y: p.y,
+            number: p.number,
+            goal: p.goal,
+            display: p.display
+          }
+        })
+      }),
+      _vm._v(" "),
+      _vm._l(_vm.hover, function(p) {
         return _c("piece", {
           key: p.number,
           attrs: {
@@ -13637,6 +13615,77 @@ const CANV_SIZE = 500 * RATIO;
     "-6": [0, 1, 0, 0, 0, 0, 1, 0, 1],
     "-7": [0, 1, 0, 0, 0, 0, 0, 1, 0],
     "-8": [0, 0, 0, 0, 0, 0, 0, 1, 0]
+  }
+});
+
+/***/ }),
+
+/***/ "./src/Utils.js":
+/*!**********************!*\
+  !*** ./src/Utils.js ***!
+  \**********************/
+/*! exports provided: default */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony default export */ __webpack_exports__["default"] = ({
+  PointToCellNumber: (width, height, x, y) => {
+    let cellSize = width / 6;
+    return Math.floor(x / cellSize) * 10 + Math.floor(y / cellSize);
+  },
+  CellNumberToPoint: (width, height, cellNumber) => {
+    let cellSize = width / 6;
+    let x = ~~(cellNumber / 10) * cellSize;
+    let y = ~~(cellNumber % 10) * cellSize;
+    return {
+      x,
+      y
+    };
+  },
+  MakePieces: () => {
+    const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
+    let pieces = [];
+
+    for (const i of numbers) {
+      pieces.push({
+        number: i,
+        x: 0,
+        y: 0,
+        goal: false,
+        display: "none"
+      });
+    }
+
+    return pieces;
+  },
+  ShuffleBoard: () => {
+    let map = [];
+
+    for (let num in map) {
+      map[num] = 0;
+    }
+
+    let arr = [1, 2, 3, 4, 5, 6, 7, 8];
+    let red_num = [0, 10, 20, 30, 40, 50, 11, 41];
+    let blue_num = [55, 45, 35, 25, 15, 5, 44, 14];
+
+    for (let i = arr.length - 1; i >= 0; i--) {
+      let r = Math.floor(Math.random() * (i + 1));
+      let tmp = arr[i];
+      arr[i] = arr[r];
+      arr[r] = tmp;
+    }
+
+    for (let num in blue_num) {
+      map[blue_num[num]] = arr[num];
+    }
+
+    for (let num in red_num) {
+      map[red_num[num]] = -1 * arr[num];
+    }
+
+    return map;
   }
 });
 

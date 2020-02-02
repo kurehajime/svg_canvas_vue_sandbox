@@ -4,23 +4,8 @@ import BackGround from "./BackGround";
 import Params from "../Params";
 import Utils from "../Utils";
 
-const MakePieces = () => {
-  const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
-  let pieces = [];
-  for (const i of numbers) {
-    pieces.push({
-      number: i,
-      x: 0,
-      y: 0,
-      goal: false,
-      display: "none"
-    });
-  }
-  return pieces;
-};
-
 const MapToPieces = (width, height, map) => {
-  let pieces = MakePieces();
+  let pieces = Utils.MakePieces();
   for (let m = 0; m < map.length; m++) {
     for (let p = 0; p < pieces.length; p++) {
       if (pieces[p].number == map[m]) {
