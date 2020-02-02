@@ -1,15 +1,17 @@
-export default {
-    PointToCellNumber : (width, height, x, y) => {
+export default class{
+    static PointToCellNumber(width, height, x, y){
         let cellSize = width / 6;
         return Math.floor(x / cellSize) * 10 + Math.floor(y / cellSize);
-    },
-    CellNumberToPoint : (width, height, cellNumber) => {
+    }
+
+    static CellNumberToPoint(width, height, cellNumber){
         let cellSize = width / 6;
         let x = ~~(cellNumber / 10) * cellSize;
         let y = ~~(cellNumber % 10) * cellSize;
         return { x, y };
-    },
-    MakePieces : () => {
+    }
+
+    static MakePieces(){
       const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
       let pieces = [];
       for (const i of numbers) {
@@ -22,8 +24,28 @@ export default {
         });
       }
       return pieces;
-    },
-    ShuffleBoard : ()=> {
+    }
+    static MapToPieces(width, height, map){
+      let pieces = this.MakePieces();
+      for (let m = 0; m < map.length; m++) {
+        for (let p = 0; p < pieces.length; p++) {
+          if (pieces[p].number == map[m]) {
+            pieces[p].display = "inline";
+            let { x, y } = this.CellNumberToPoint(width, height, m);
+            pieces[p].x = x;
+            pieces[p].y = y;
+            let yy = ~~(m % 10);
+            if (map[m] > 0 && yy === 0) {
+              pieces[p].goal = true;
+            } else if (map[m] < 0 && yy == 5) {
+              pieces[p].goal = true;
+            }
+          }
+        }
+      }
+      return pieces;
+    }
+    static ShuffleBoard(){
         let map = [];
         for (let num in map) {
           map[num] = 0;

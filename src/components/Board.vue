@@ -4,31 +4,12 @@ import BackGround from "./BackGround";
 import Params from "../Params";
 import Utils from "../Utils";
 
-const MapToPieces = (width, height, map) => {
-  let pieces = Utils.MakePieces();
-  for (let m = 0; m < map.length; m++) {
-    for (let p = 0; p < pieces.length; p++) {
-      if (pieces[p].number == map[m]) {
-        pieces[p].display = "inline";
-        let { x, y } = Utils.CellNumberToPoint(width, height, m);
-        pieces[p].x = x;
-        pieces[p].y = y;
-        let yy = ~~(m % 10);
-        if (map[m] > 0 && yy === 0) {
-          pieces[p].goal = true;
-        } else if (map[m] < 0 && yy == 5) {
-          pieces[p].goal = true;
-        }
-      }
-    }
-  }
-  return pieces;
-};
+
 
 export default {
   components: { Piece, BackGround },
   data() {
-    let pieces = MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, this.map);
+    let pieces = Utils.MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, this.map);
     return {
       fill: "#123456",
       title: "hello",
@@ -45,7 +26,7 @@ export default {
   },
   watch: {
     map: function(newMap, oldMap) {
-      this.pieces = MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, newMap);
+      this.pieces = Utils.MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, newMap);
     }
   },
   methods: {

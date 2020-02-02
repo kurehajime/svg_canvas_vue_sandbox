@@ -232,34 +232,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-const MapToPieces = (width, height, map) => {
-  let pieces = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MakePieces();
-
-  for (let m = 0; m < map.length; m++) {
-    for (let p = 0; p < pieces.length; p++) {
-      if (pieces[p].number == map[m]) {
-        pieces[p].display = "inline";
-        let {
-          x,
-          y
-        } = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].CellNumberToPoint(width, height, m);
-        pieces[p].x = x;
-        pieces[p].y = y;
-        let yy = ~~(m % 10);
-
-        if (map[m] > 0 && yy === 0) {
-          pieces[p].goal = true;
-        } else if (map[m] < 0 && yy == 5) {
-          pieces[p].goal = true;
-        }
-      }
-    }
-  }
-
-  return pieces;
-};
-
 /* harmony default export */ __webpack_exports__["default"] = ({
   components: {
     Piece: _Piece__WEBPACK_IMPORTED_MODULE_0__["default"],
@@ -267,7 +239,7 @@ const MapToPieces = (width, height, map) => {
   },
 
   data() {
-    let pieces = MapToPieces(_Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, this.map);
+    let pieces = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MapToPieces(_Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, this.map);
     return {
       fill: "#123456",
       title: "hello",
@@ -285,7 +257,7 @@ const MapToPieces = (width, height, map) => {
   },
   watch: {
     map: function (newMap, oldMap) {
-      this.pieces = MapToPieces(_Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, newMap);
+      this.pieces = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MapToPieces(_Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, newMap);
     }
   },
   methods: {
@@ -13629,12 +13601,13 @@ const CANV_SIZE = 500 * RATIO;
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony default export */ __webpack_exports__["default"] = ({
-  PointToCellNumber: (width, height, x, y) => {
+/* harmony default export */ __webpack_exports__["default"] = (class {
+  static PointToCellNumber(width, height, x, y) {
     let cellSize = width / 6;
     return Math.floor(x / cellSize) * 10 + Math.floor(y / cellSize);
-  },
-  CellNumberToPoint: (width, height, cellNumber) => {
+  }
+
+  static CellNumberToPoint(width, height, cellNumber) {
     let cellSize = width / 6;
     let x = ~~(cellNumber / 10) * cellSize;
     let y = ~~(cellNumber % 10) * cellSize;
@@ -13642,8 +13615,9 @@ __webpack_require__.r(__webpack_exports__);
       x,
       y
     };
-  },
-  MakePieces: () => {
+  }
+
+  static MakePieces() {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
     let pieces = [];
 
@@ -13658,8 +13632,36 @@ __webpack_require__.r(__webpack_exports__);
     }
 
     return pieces;
-  },
-  ShuffleBoard: () => {
+  }
+
+  static MapToPieces(width, height, map) {
+    let pieces = this.MakePieces();
+
+    for (let m = 0; m < map.length; m++) {
+      for (let p = 0; p < pieces.length; p++) {
+        if (pieces[p].number == map[m]) {
+          pieces[p].display = "inline";
+          let {
+            x,
+            y
+          } = this.CellNumberToPoint(width, height, m);
+          pieces[p].x = x;
+          pieces[p].y = y;
+          let yy = ~~(m % 10);
+
+          if (map[m] > 0 && yy === 0) {
+            pieces[p].goal = true;
+          } else if (map[m] < 0 && yy == 5) {
+            pieces[p].goal = true;
+          }
+        }
+      }
+    }
+
+    return pieces;
+  }
+
+  static ShuffleBoard() {
     let map = [];
 
     for (let num in map) {
@@ -13687,6 +13689,7 @@ __webpack_require__.r(__webpack_exports__);
 
     return map;
   }
+
 });
 
 /***/ }),
