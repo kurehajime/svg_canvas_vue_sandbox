@@ -127,10 +127,8 @@ __webpack_require__.r(__webpack_exports__);
         }
       } else {
         let canm = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].getCanMovePanelX(this.hover, this.map);
-        console.log(canm);
 
         if (canm.indexOf(cellNumber) >= 0) {
-          console.log("hit");
           let nextMap = Array.from(this.map);
           nextMap[cellNumber] = nextMap[this.hover];
           nextMap[this.hover] = null;
@@ -268,37 +266,56 @@ __webpack_require__.r(__webpack_exports__);
       board_w: _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE,
       board_h: _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE,
       pieces: pieces,
-      hover: []
+      hover_piece: [],
+      mouse_event: null
     };
   },
 
   props: {
-    map: Array
+    map: Array,
+    hover: Number
   },
   watch: {
-    map: function (newMap, oldMap) {
+    mapAndHover: function (newVal, oldVal) {
+      let newMap = Array.from(newVal[0]);
+      let newHover = newVal[1];
+
+      if (newHover != null) {
+        newMap[newHover] = null;
+      }
+
       this.pieces = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MapToPieces(_Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE, newMap);
+      this.mousemove(this.mouse_event);
     }
+  },
+  computed: {
+    mapAndHover() {
+      return [this.map, this.hover];
+    }
+
   },
   methods: {
     clicked: function (e) {
-      let cellNumber = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, e.offsetX, e.offsetY); // let { x, y } = Utils.CellNumberToPoint(
-      //   this.$el.getBoundingClientRect().width,
-      //   this.$el.getBoundingClientRect().height,
-      //   cellNumber
-      // );
-      // this.pieces[0].x = x;
-      // this.pieces[0].y = y;
-
+      this.mouse_event = e;
+      let cellNumber = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, this.mouse_event.offsetX, this.mouse_event.offsetY);
       this.$emit('clickCell', cellNumber);
+      this.mousemove(e);
     },
     mousemove: function (e) {
-      if (this.hover.length == 0) {
+      this.mouse_event = e;
+
+      if (this.hover == null) {
+        this.hover_piece = [];
         return;
       }
 
-      let cellNumber = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].PointToCellNumber(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, e.offsetX, e.offsetY);
-      console.log(cellNumber);
+      let hp = _Utils__WEBPACK_IMPORTED_MODULE_3__["default"].MakePiece();
+      let plus = _Params__WEBPACK_IMPORTED_MODULE_2__["default"].CANV_SIZE / 6 / 2;
+      hp.display = "inline";
+      hp.number = this.map[this.hover];
+      hp.x = this.mouse_event.offsetX - plus;
+      hp.y = this.mouse_event.offsetY - plus;
+      this.hover_piece = [hp];
     }
   }
 });
@@ -1106,7 +1123,7 @@ var render = function() {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("board", {
-    attrs: { map: _vm.map },
+    attrs: { map: _vm.map, hover: _vm.hover },
     on: { clickCell: _vm.clickCell }
   })
 }
@@ -1200,9 +1217,9 @@ var render = function() {
         })
       }),
       _vm._v(" "),
-      _vm._l(_vm.hover, function(p) {
+      _vm._l(_vm.hover_piece, function(p) {
         return _c("piece", {
-          key: p.number,
+          key: "hover" + p.number,
           attrs: {
             x: p.x,
             y: p.y,
@@ -14154,18 +14171,22 @@ __webpack_require__.r(__webpack_exports__);
     };
   }
 
+  static MakePiece(number) {
+    return {
+      number: number,
+      x: 0,
+      y: 0,
+      goal: false,
+      display: "none"
+    };
+  }
+
   static MakePieces() {
     const numbers = [1, 2, 3, 4, 5, 6, 7, 8, -1, -2, -3, -4, -5, -6, -7, -8];
     let pieces = [];
 
     for (const i of numbers) {
-      pieces.push({
-        number: i,
-        x: 0,
-        y: 0,
-        goal: false,
-        display: "none"
-      });
+      pieces.push(this.MakePiece(i));
     }
 
     return pieces;

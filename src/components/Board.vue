@@ -18,46 +18,55 @@ export default {
       board_w: Params.CANV_SIZE,
       board_h: Params.CANV_SIZE,
       pieces: pieces,
-      hover : [],
+      hover_piece : [],
+      mouse_event : null,
     };
   },
   props: {
-    map: Array
+    map: Array,
+    hover : Number,
   },
   watch: {
-    map: function(newMap, oldMap) {
+    mapAndHover: function(newVal, oldVal) {
+      let newMap = Array.from(newVal[0]);
+      let newHover = newVal[1];
+      if(newHover != null){
+        newMap[newHover] = null;
+      }
       this.pieces = Utils.MapToPieces(Params.CANV_SIZE, Params.CANV_SIZE, newMap);
+      this.mousemove(this.mouse_event);
+    }
+  },
+  computed:{
+    mapAndHover(){
+      return [this.map,this.hover];
     }
   },
   methods: {
     clicked: function(e) {
+      this.mouse_event = e;
       let cellNumber = Utils.PointToCellNumber(
         this.$el.getBoundingClientRect().width,
         this.$el.getBoundingClientRect().height,
-        e.offsetX,
-        e.offsetY
+        this.mouse_event.offsetX,
+        this.mouse_event.offsetY
       );
-      // let { x, y } = Utils.CellNumberToPoint(
-      //   this.$el.getBoundingClientRect().width,
-      //   this.$el.getBoundingClientRect().height,
-      //   cellNumber
-      // );
-      // this.pieces[0].x = x;
-      // this.pieces[0].y = y;
       this.$emit('clickCell',cellNumber);
+      this.mousemove(e);
     },
     mousemove: function(e){
-      if(this.hover.length == 0){
+      this.mouse_event = e;
+      if(this.hover == null){
+        this.hover_piece = [];
         return;
       }
-
-      let cellNumber = Utils.PointToCellNumber(
-        this.$el.getBoundingClientRect().width,
-        this.$el.getBoundingClientRect().height,
-        e.offsetX,
-        e.offsetY
-      );
-      console.log(cellNumber);
+      let hp = Utils.MakePiece();
+      let plus= (Params.CANV_SIZE / 6)/2;
+      hp.display ="inline"
+      hp.number = this.map[this.hover];
+      hp.x = this.mouse_event.offsetX -plus;
+      hp.y = this.mouse_event.offsetY -plus;
+      this.hover_piece =[hp];
     }
   }
 };
@@ -77,10 +86,10 @@ export default {
       :goal="p.goal"
       :display="p.display"
     />
-    <!-- hover -->
+    <!-- hover_piece -->
     <piece
-      v-for="p in hover"
-      :key="p.number"
+      v-for="p in hover_piece"
+      :key="'hover'+p.number"
       :x="p.x"
       :y="p.y"
       :number="p.number"

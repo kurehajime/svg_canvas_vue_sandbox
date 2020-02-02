@@ -29,9 +29,7 @@ export default {
       }
     }else{
       let canm = Ai.getCanMovePanelX(this.hover, this.map);
-      console.log(canm);
       if (canm.indexOf(cellNumber) >= 0) {
-        console.log("hit");
         let nextMap =Array.from(this.map);
         nextMap[cellNumber] = nextMap[this.hover];
         nextMap[this.hover] = null;
@@ -48,7 +46,7 @@ export default {
 }
 </script>
 <template>
-  <board :map = "map" @clickCell="clickCell"/>
+  <board :map = "map" :hover="hover" @clickCell="clickCell"/>
 </template>
 <style scoped>
 </style>
