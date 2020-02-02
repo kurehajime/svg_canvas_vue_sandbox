@@ -3,6 +3,8 @@
 const path = require('path')
 const VueLoaderPlugin = require('vue-loader/lib/plugin')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
+const date=require('date-utils');
+const timestamp = (new Date()).toFormat("YYYYMMDDHH24MI");
 
 module.exports = {
   // エントリポイントのファイル
@@ -48,6 +50,12 @@ module.exports = {
         {
           from: './',
           to: '',
+          transform: function (content, path) {
+            if(path.indexOf("index.html") != -1){
+              return content.toString().replace("TIMESTAMP",timestamp);
+            }
+            return content;
+          },
         },
       ],
       { context: 'static' }
