@@ -67,4 +67,7 @@ export default class {
     }
     return map;
   }
+  static CanPut(){
+    
+  }
 }
