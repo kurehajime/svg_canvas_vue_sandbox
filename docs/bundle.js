@@ -109,7 +109,12 @@ __webpack_require__.r(__webpack_exports__);
   data() {
     return {
       map: _Utils__WEBPACK_IMPORTED_MODULE_2__["default"].ShuffleBoard(),
-      hover: null
+      hover: null,
+      turn_player: 1,
+      winner: null,
+      goaled: false,
+      logArray2: [],
+      thisHand: null
     };
   },
 
@@ -134,10 +139,135 @@ __webpack_require__.r(__webpack_exports__);
           nextMap[this.hover] = null;
           this.map = nextMap;
           this.hover = null;
+          this.turn_player = this.turn_player * -1;
+
+          if (this.winner === null) {
+            window.setTimeout(() => {
+              this.ai(5);
+            }, 250);
+          }
         } else {
           this.hover = null;
         }
       }
+    },
+
+    ai(level) {
+      let hand;
+      let thisMap = Array.from(this.map); // 終盤になったら長考してみる。
+
+      let count = this.getNodeCount(thisMap) / 2;
+      let plus = 0;
+      level = parseInt(level);
+
+      switch (level) {
+        case 1:
+          if (count <= 7) {
+            plus++;
+          }
+
+          break;
+
+        case 2:
+          if (count <= 8) {
+            plus++;
+          }
+
+          break;
+
+        case 3:
+          if (count <= 10) {
+            plus++;
+          }
+
+          if (count <= 6) {
+            plus++;
+          }
+
+          break;
+
+        case 4:
+          if (count <= 11) {
+            plus++;
+          }
+
+          if (count <= 7) {
+            plus++;
+          }
+
+          break;
+
+        case 5:
+          if (count > 16) {
+            plus--;
+          }
+
+          if (count <= 12) {
+            plus++;
+          }
+
+          if (count <= 8) {
+            plus++;
+          }
+
+          break;
+
+        case 6:
+          if (count > 16) {
+            plus--;
+          }
+
+          if (count <= 12) {
+            plus++;
+          }
+
+          if (count <= 8) {
+            plus++;
+          }
+
+          break;
+      }
+
+      hand = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].thinkAI(thisMap, this.turn_player, level + plus + 1)[0];
+      this.thisHand = hand;
+
+      if (hand) {
+        thisMap[hand[1]] = thisMap[hand[0]];
+        thisMap[hand[0]] = 0;
+        this.logArray2.push([hand[0], hand[1]]);
+      }
+
+      this.turn_player = this.turn_player * -1;
+      this.map = thisMap;
+    },
+
+    getNodeCount(wkMap) {
+      let count = 0;
+
+      for (let panel_num in wkMap) {
+        if (wkMap[panel_num] === 0) {
+          continue;
+        }
+
+        let canMove = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].getCanMovePanelX(panel_num, wkMap);
+        count += canMove.length;
+      }
+
+      return count;
+    },
+
+    isGoaled(map, afterHand, turn) {
+      if (turn > 0) {
+        if (afterHand % 10 === 0) {
+          return true;
+        }
+      } else if (turn < 0) {
+        if (afterHand % 10 === 5) {
+          return true;
+        }
+      }
+
+      return false;
     }
 
   }
@@ -13694,7 +13824,7 @@ const DEFAULT_EVALPARAM = {
     } // 手詰まりは判定
 
 
-    if (isNoneNode(wkMap)) {
+    if (this.isNoneNode(wkMap)) {
       if (sum1 > -1 * sum2) {
         return 1;
       } else if (sum1 < -1 * sum2) {
@@ -13788,7 +13918,7 @@ const DEFAULT_EVALPARAM = {
     }
 
     if (sum1 === sum2) {
-      if (!isNoneNode(wkMap)) {
+      if (!this.isNoneNode(wkMap)) {
         return false;
       }
 
@@ -13815,7 +13945,7 @@ const DEFAULT_EVALPARAM = {
         continue;
       }
 
-      let canMove = hasCanMovePanelX(panel_num, wkMap);
+      let canMove = this.hasCanMovePanelX(panel_num, wkMap);
 
       if (canMove === true) {
         if (wkMap[panel_num] > 0) {
@@ -13935,7 +14065,7 @@ const DEFAULT_EVALPARAM = {
         continue;
       }
 
-      let canMove = getCanMovePanelX(panel_num, wkMap);
+      let canMove = this.getCanMovePanelX(panel_num, wkMap);
 
       for (let num = 0; num < canMove.length; num++) {
         let nodeMap = new Int8Array(wkMap);
@@ -13959,12 +14089,12 @@ const DEFAULT_EVALPARAM = {
   static evalMap(wkMap, nearwin, evalparam) {
     let ev = 0; // 引き分け判定
 
-    if (isDraw(wkMap)) {
+    if (this.isDraw(wkMap)) {
       return 0;
     } // 終局判定
 
 
-    let end = isEndX(wkMap, nearwin);
+    let end = this.isEndX(wkMap, nearwin);
 
     if (end === 1) {
       return +9999999;
@@ -14003,7 +14133,7 @@ const DEFAULT_EVALPARAM = {
     let besthand;
 
     if (depth === 0) {
-      best_score = evalMap(map, nearwin, evalparam);
+      best_score = this.evalMap(map, nearwin, evalparam);
       return [besthand, best_score];
     }
 
@@ -14012,14 +14142,14 @@ const DEFAULT_EVALPARAM = {
       b = 9999999 * turn_player;
     }
 
-    let nodeList = getNodeMap(map, turn_player);
+    let nodeList = this.getNodeMap(map, turn_player);
 
     for (let i = 0; i < nodeList.length; i++) {
       let hand = nodeList[i][0];
       let map0 = nodeList[i][1];
       let sc = 0; // 必勝            
 
-      let end = isEndX(map0, nearwin);
+      let end = this.isEndX(map0, nearwin);
 
       if (end === turn_player) {
         return [hand, 999999 * turn_player];
@@ -14035,10 +14165,10 @@ const DEFAULT_EVALPARAM = {
         continue;
       }
 
-      if (isNoneNode(map0)) {
+      if (this.isNoneNode(map0)) {
         sc = 0;
       } else {
-        sc = deepThinkAllAB(map0, turn_player * -1, depth - 1, b, a, nearwin, evalparam)[1];
+        sc = this.deepThinkAllAB(map0, turn_player * -1, depth - 1, b, a, nearwin, evalparam)[1];
       }
 
       if (besthand === void 0) {
@@ -14079,14 +14209,14 @@ const DEFAULT_EVALPARAM = {
       evalparam = DEFAULT_EVALPARAM;
     }
 
-    if (isEndX(wkMap, false) !== 0) {
+    if (this.isEndX(wkMap, false) !== 0) {
       nearwin = true;
     }
 
-    hand = deepThinkAllAB(wkMap, turn_player, depth, a, b, nearwin, evalparam);
+    hand = this.deepThinkAllAB(wkMap, turn_player, depth, a, b, nearwin, evalparam);
 
     if (hand[1] * turn_player === -999999) {
-      hand = deepThinkAllAB(wkMap, turn_player, 1, a, b, nearwin, evalparam);
+      hand = this.deepThinkAllAB(wkMap, turn_player, 1, a, b, nearwin, evalparam);
     }
 
     return hand;

@@ -125,7 +125,7 @@ export default class {
         }
 
         // 手詰まりは判定
-        if (isNoneNode(wkMap)) {
+        if (this.isNoneNode(wkMap)) {
             if (sum1 > (-1 * sum2)) {
                 return 1;
             } else if (sum1 < (-1 * sum2)) {
@@ -177,7 +177,7 @@ export default class {
         if (wkMap[45] * -1 > 0) { sum2 -= wkMap[45]; }
         if (wkMap[55] * -1 > 0) { sum2 -= wkMap[55]; }
         if (sum1 === sum2) {
-            if (!isNoneNode(wkMap)) {
+            if (!this.isNoneNode(wkMap)) {
                 return false;
             }
             return true;
@@ -198,7 +198,7 @@ export default class {
             if (wkMap[panel_num] === 0) {
                 continue;
             }
-            let canMove = hasCanMovePanelX(panel_num, wkMap);
+            let canMove = this.hasCanMovePanelX(panel_num, wkMap);
             if (canMove === true) {
                 if (wkMap[panel_num] > 0) {
                     flag1 = true;
@@ -299,7 +299,7 @@ export default class {
             if (wkMap[panel_num] * turn_player <= 0 || wkMap[panel_num] === 0) {
                 continue;
             }
-            let canMove = getCanMovePanelX(panel_num, wkMap);
+            let canMove = this.getCanMovePanelX(panel_num, wkMap);
             for (let num = 0; num < canMove.length; num++) {
                 let nodeMap = new Int8Array(wkMap);
                 nodeMap[canMove[num]] = nodeMap[panel_num];
@@ -321,11 +321,11 @@ export default class {
         let ev = 0;
 
         // 引き分け判定
-        if (isDraw(wkMap)) {
+        if (this.isDraw(wkMap)) {
             return 0;
         }
         // 終局判定
-        let end = isEndX(wkMap, nearwin);
+        let end = this.isEndX(wkMap, nearwin);
         if (end === 1) {
             return +9999999;
         } else if (end === -1) {
@@ -358,7 +358,7 @@ export default class {
         let best_score = turn_player * 9999999 * -1;
         let besthand;
         if (depth === 0) {
-            best_score = evalMap(map, nearwin, evalparam);
+            best_score = this.evalMap(map, nearwin, evalparam);
             return [besthand, best_score];
         }
         if (a === void 0 || b === void 0) {
@@ -366,13 +366,13 @@ export default class {
             b = 9999999 * turn_player;
         }
 
-        let nodeList = getNodeMap(map, turn_player);
+        let nodeList = this.getNodeMap(map, turn_player);
         for (let i = 0; i < nodeList.length; i++) {
             let hand = nodeList[i][0];
             let map0 = nodeList[i][1];
             let sc = 0;
             // 必勝            
-            let end = isEndX(map0, nearwin);
+            let end = this.isEndX(map0, nearwin);
             if (end === turn_player) {
                 return [hand, 999999 * turn_player];
             }
@@ -384,10 +384,10 @@ export default class {
                 }
                 continue;
             }
-            if (isNoneNode(map0)) {
+            if (this.isNoneNode(map0)) {
                 sc = 0;
             } else {
-                sc = deepThinkAllAB(map0, turn_player * -1, depth - 1, b, a, nearwin, evalparam)[1];
+                sc = this.deepThinkAllAB(map0, turn_player * -1, depth - 1, b, a, nearwin, evalparam)[1];
             }
             if (besthand === void 0) {
                 best_score = sc;
@@ -419,13 +419,13 @@ export default class {
         if (!evalparam) {
             evalparam = DEFAULT_EVALPARAM;
         }
-        if (isEndX(wkMap, false) !== 0) {
+        if (this.isEndX(wkMap, false) !== 0) {
             nearwin = true;
         }
 
-        hand = deepThinkAllAB(wkMap, turn_player, depth, a, b, nearwin, evalparam);
+        hand = this.deepThinkAllAB(wkMap, turn_player, depth, a, b, nearwin, evalparam);
         if (hand[1] * turn_player === -999999) {
-            hand = deepThinkAllAB(wkMap, turn_player, 1, a, b, nearwin, evalparam);
+            hand = this.deepThinkAllAB(wkMap, turn_player, 1, a, b, nearwin, evalparam);
         }
         return hand;
     }
