@@ -154,9 +154,52 @@ __webpack_require__.r(__webpack_exports__);
 
     ai(level) {
       let hand;
-      let thisMap = Array.from(this.map); // 終盤になったら長考してみる。
+      let thisMap = Array.from(this.map);
+      let depth = this.getDepth(thisMap, level);
+      hand = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].thinkAI(thisMap, this.turn_player, depth)[0];
+      this.thisHand = hand;
 
-      let count = this.getNodeCount(thisMap) / 2;
+      if (hand) {
+        thisMap[hand[1]] = thisMap[hand[0]];
+        thisMap[hand[0]] = 0;
+        this.logArray2.push([hand[0], hand[1]]);
+      }
+
+      this.turn_player = this.turn_player * -1;
+      this.map = thisMap;
+    },
+
+    getNodeCount(wkMap) {
+      let count = 0;
+
+      for (let panel_num in wkMap) {
+        if (wkMap[panel_num] === 0) {
+          continue;
+        }
+
+        let canMove = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].getCanMovePanelX(panel_num, wkMap);
+        count += canMove.length;
+      }
+
+      return count;
+    },
+
+    isGoaled(map, afterHand, turn) {
+      if (turn > 0) {
+        if (afterHand % 10 === 0) {
+          return true;
+        }
+      } else if (turn < 0) {
+        if (afterHand % 10 === 5) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+
+    getDepth(map, level) {
+      let count = this.getNodeCount(map) / 2;
       let plus = 0;
       level = parseInt(level);
 
@@ -228,46 +271,7 @@ __webpack_require__.r(__webpack_exports__);
           break;
       }
 
-      hand = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].thinkAI(thisMap, this.turn_player, level + plus + 1)[0];
-      this.thisHand = hand;
-
-      if (hand) {
-        thisMap[hand[1]] = thisMap[hand[0]];
-        thisMap[hand[0]] = 0;
-        this.logArray2.push([hand[0], hand[1]]);
-      }
-
-      this.turn_player = this.turn_player * -1;
-      this.map = thisMap;
-    },
-
-    getNodeCount(wkMap) {
-      let count = 0;
-
-      for (let panel_num in wkMap) {
-        if (wkMap[panel_num] === 0) {
-          continue;
-        }
-
-        let canMove = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].getCanMovePanelX(panel_num, wkMap);
-        count += canMove.length;
-      }
-
-      return count;
-    },
-
-    isGoaled(map, afterHand, turn) {
-      if (turn > 0) {
-        if (afterHand % 10 === 0) {
-          return true;
-        }
-      } else if (turn < 0) {
-        if (afterHand % 10 === 5) {
-          return true;
-        }
-      }
-
-      return false;
+      return level + plus + 1;
     }
 
   }

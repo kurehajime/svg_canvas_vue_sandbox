@@ -53,8 +53,42 @@ export default {
     ai(level) {
       let hand;
       let thisMap = Array.from(this.map);
-      // 終盤になったら長考してみる。
-      let count = this.getNodeCount(thisMap) / 2;
+      let depth = this.getDepth(thisMap,level);
+      hand = Ai.thinkAI(thisMap, this.turn_player, depth)[0];
+      this.thisHand = hand;
+      if (hand) {
+        thisMap[hand[1]] = thisMap[hand[0]];
+        thisMap[hand[0]] = 0;
+        this.logArray2.push([hand[0], hand[1]]);
+      }
+      this.turn_player = this.turn_player * -1;
+      this.map = thisMap;
+    },
+    getNodeCount(wkMap) {
+      let count = 0;
+      for (let panel_num in wkMap) {
+        if (wkMap[panel_num] === 0) {
+          continue;
+        }
+        let canMove = Ai.getCanMovePanelX(panel_num, wkMap);
+        count += canMove.length;
+      }
+      return count;
+    },
+    isGoaled(map, afterHand, turn) {
+      if (turn > 0) {
+        if (afterHand % 10 === 0) {
+          return true;
+        }
+      } else if (turn < 0) {
+        if (afterHand % 10 === 5) {
+          return true;
+        }
+      }
+      return false;
+    },
+    getDepth(map,level){
+     let count = this.getNodeCount(map) / 2;
       let plus = 0;
       level = parseInt(level);
       switch (level) {
@@ -107,40 +141,8 @@ export default {
           }
           break;
       }
-
-      hand = Ai.thinkAI(thisMap, this.turn_player, level + plus + 1)[0];
-      this.thisHand = hand;
-      if (hand) {
-        thisMap[hand[1]] = thisMap[hand[0]];
-        thisMap[hand[0]] = 0;
-        this.logArray2.push([hand[0], hand[1]]);
-      }
-      this.turn_player = this.turn_player * -1;
-      this.map = thisMap;
+      return level + plus + 1;
     },
-    getNodeCount(wkMap) {
-      let count = 0;
-      for (let panel_num in wkMap) {
-        if (wkMap[panel_num] === 0) {
-          continue;
-        }
-        let canMove = Ai.getCanMovePanelX(panel_num, wkMap);
-        count += canMove.length;
-      }
-      return count;
-    },
-    isGoaled(map, afterHand, turn) {
-      if (turn > 0) {
-        if (afterHand % 10 === 0) {
-          return true;
-        }
-      } else if (turn < 0) {
-        if (afterHand % 10 === 5) {
-          return true;
-        }
-      }
-      return false;
-    }
   }
 };
 </script>
