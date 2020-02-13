@@ -1,6 +1,7 @@
 let RATIO =1;
 const CANV_SIZE =500*RATIO;
 export default {
+    LIMIT_1000DAY:3,
     COLOR_LINE: '#333333',
     COLOR_PANEL_1: '#660033',
     COLOR_PANEL_2: '#004466',

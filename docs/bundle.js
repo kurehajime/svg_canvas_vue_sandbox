@@ -98,6 +98,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _Board__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Board */ "./src/components/Board.vue");
 /* harmony import */ var _Ai__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../Ai */ "./src/Ai.js");
 /* harmony import */ var _Utils__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../Utils */ "./src/Utils.js");
+/* harmony import */ var _Params__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ../Params */ "./src/Params.js");
+
 
 
 
@@ -113,8 +115,12 @@ __webpack_require__.r(__webpack_exports__);
       turn_player: 1,
       winner: null,
       goaled: false,
+      logArray: [],
       logArray2: [],
-      thisHand: null
+      thisHand: null,
+      map_list: {},
+      blueScore: 0,
+      redScore: 0
     };
   },
 
@@ -123,8 +129,11 @@ __webpack_require__.r(__webpack_exports__);
       let {
         x,
         y
-      } = _Utils__WEBPACK_IMPORTED_MODULE_2__["default"].CellNumberToPoint(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, cellNumber); // this.map[0].x = x;
-      // this.map[0].y = y;
+      } = _Utils__WEBPACK_IMPORTED_MODULE_2__["default"].CellNumberToPoint(this.$el.getBoundingClientRect().width, this.$el.getBoundingClientRect().height, cellNumber);
+
+      if (this.winner != null) {
+        return;
+      }
 
       if (this.hover == null) {
         if (this.map[cellNumber] != null) {
@@ -140,10 +149,12 @@ __webpack_require__.r(__webpack_exports__);
           this.map = nextMap;
           this.hover = null;
           this.turn_player = this.turn_player * -1;
+          this.calcScore(this.map);
 
           if (this.winner === null) {
             window.setTimeout(() => {
               this.ai(5);
+              this.calcScore(this.map);
             }, 250);
           }
         } else {
@@ -272,6 +283,124 @@ __webpack_require__.r(__webpack_exports__);
       }
 
       return level + plus + 1;
+    },
+
+    calcScore(map) {
+      let sum1 = 0;
+      let sum2 = 0;
+      let GoalTop = [0, 10, 20, 30, 40, 50];
+      let GoalBottom = [5, 15, 25, 35, 45, 55];
+      let thisMap = map; // 点数勝利
+
+      for (let i in GoalTop) {
+        if (thisMap[GoalTop[i]] * 1 > 0) {
+          sum1 += thisMap[GoalTop[i]];
+        }
+      }
+
+      for (let i in GoalBottom) {
+        if (thisMap[GoalBottom[i]] * -1 > 0) {
+          sum2 += thisMap[GoalBottom[i]];
+        }
+      }
+
+      if (sum1 >= 8) {
+        this.winner = 1;
+      } else if (sum2 <= -8) {
+        this.winner = -1;
+      } // 手詰まりは判定
+
+
+      if (this.isNoneNode(thisMap)) {
+        if (Math.abs(sum1) > Math.abs(sum2)) {
+          this.winner = 1;
+        } else if (Math.abs(sum1) < Math.abs(sum2)) {
+          // 引き分けは後攻勝利
+          this.winner = -1;
+        } else if (Math.abs(sum1) == Math.abs(sum2)) {
+          this.winner = 0;
+        }
+      } else {
+        if (this.is1000day(thisMap) === true) {
+          this.winner = 0;
+        }
+      }
+
+      this.blueScore = Math.abs(sum1);
+      this.redScore = Math.abs(sum2);
+      this.updateMessage();
+    },
+
+    isNoneNode(wkMap) {
+      let flag1 = false;
+      let flag2 = false;
+
+      for (let panel_num in wkMap) {
+        if (wkMap[panel_num] === 0) {
+          continue;
+        }
+
+        let canMove = _Ai__WEBPACK_IMPORTED_MODULE_1__["default"].getCanMovePanelX(panel_num, wkMap);
+
+        if (canMove.length !== 0) {
+          if (wkMap[panel_num] > 0) {
+            flag1 = true;
+          } else if (wkMap[panel_num] < 0) {
+            flag2 = true;
+          }
+        }
+
+        if (flag1 && flag2) {
+          return false;
+        }
+      }
+
+      return true;
+    },
+
+    is1000day(wkMap) {
+      let map_json = JSON.stringify(wkMap);
+
+      if (this.map_list[map_json] === undefined) {
+        this.map_list[map_json] = 1;
+        return false;
+      } else {
+        this.map_list[map_json] += 1;
+      }
+
+      if (this.map_list[map_json] >= _Params__WEBPACK_IMPORTED_MODULE_3__["default"].LIMIT_1000DAY) {
+        return true;
+      }
+
+      return false;
+    },
+
+    updateMessage() {
+      // let Block = "";
+      // document.querySelector("#blue").innerHTML = "Blue: " + blueScore + "/8";
+      // document.querySelector("#red").innerHTML = " Red: " + redScore + "/8";
+      // document.querySelector("#time").innerHTML =
+      //   "(" + thinktime.toFixed(3) + "sec)";
+      if (this.logArray.length === 0) {
+        if (this.winner == 1) {// message = "You win!";
+          // storage.setItem(
+          //   "level_" + document.querySelector("#level").value,
+          //   parseInt(
+          //     storage.getItem("level_" + document.querySelector("#level").value)
+          //   ) + 1
+          // );
+          // endgame();
+        } else if (this.winner == -1) {// message = "You lose...";
+          // storage.setItem("level_" + document.querySelector("#level").value, 0);
+          // endgame();
+        } else if (this.winner === 0) {// if (map_list[JSON.stringify(thisMap)] >= LIMIT_1000DAY) {
+          //   message = "3fold repetition";
+          // } else {
+          //   message = "-- Draw --";
+          // }
+          // endgame();
+        }
+      }
     }
 
   }
@@ -14242,6 +14371,7 @@ __webpack_require__.r(__webpack_exports__);
 let RATIO = 1;
 const CANV_SIZE = 500 * RATIO;
 /* harmony default export */ __webpack_exports__["default"] = ({
+  LIMIT_1000DAY: 3,
   COLOR_LINE: '#333333',
   COLOR_PANEL_1: '#660033',
   COLOR_PANEL_2: '#004466',
