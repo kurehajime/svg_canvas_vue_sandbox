@@ -403,6 +403,21 @@ __webpack_require__.r(__webpack_exports__);
       }
     }
 
+  },
+  computed: {
+    message: function () {
+      var mes = "";
+      mes += this.turn_player == 1 ? "Your turn <br/>" : "COM's turn  <br/>";
+      mes += "Blue : " + this.blueScore + " / Red : " + this.redScore + "  <br/>";
+
+      if (this.winner == 1) {
+        mes += "You win  <br/>";
+      } else if (this.winner == -1) {
+        mes += "You lose  <br/>";
+      }
+
+      return mes;
+    }
   }
 });
 
@@ -1385,10 +1400,21 @@ var render = function() {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("board", {
-    attrs: { map: _vm.map, hover: _vm.hover },
-    on: { clickCell: _vm.clickCell }
-  })
+  return _c(
+    "div",
+    [
+      _c("board", {
+        attrs: { map: _vm.map, hover: _vm.hover },
+        on: { clickCell: _vm.clickCell }
+      }),
+      _vm._v(" "),
+      _c("p", {
+        staticStyle: { "white-space": "pre-wrap", "word-wrap": "break-word" },
+        domProps: { innerHTML: _vm._s(_vm.message) }
+      })
+    ],
+    1
+  )
 }
 var staticRenderFns = []
 render._withStripped = true

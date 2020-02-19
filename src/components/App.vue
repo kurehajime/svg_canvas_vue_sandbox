@@ -257,11 +257,26 @@ export default {
         }
       }
     }
+  },computed:{
+    message:function(){
+      var mes = "";
+      mes += this.turn_player == 1 ? "Your turn <br/>" :"COM's turn  <br/>";
+      mes += "Blue : " + this.blueScore + " / Red : " + this.redScore + "  <br/>";
+      if(this.winner ==1){
+        mes += "You win  <br/>";
+      }else if (this.winner ==-1){
+        mes += "You lose  <br/>";
+      }
+      return mes;
+    }
   }
 };
 </script>
 <template>
+<div>
   <board :map="map" :hover="hover" @clickCell="clickCell" />
+  <p style="white-space:pre-wrap; word-wrap:break-word;" v-html="message" />
+</div>
 </template>
 <style scoped>
 </style>
