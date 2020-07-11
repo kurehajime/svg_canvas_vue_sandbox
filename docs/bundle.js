@@ -780,7 +780,7 @@ const drawBk = img_bk => {
 
 exports = module.exports = __webpack_require__(/*! ../../node_modules/css-loader/dist/runtime/api.js */ "./node_modules/css-loader/dist/runtime/api.js")(false);
 // Module
-exports.push([module.i, "\n.piecebg[data-v-14e36024]{\n  opacity: 0.35;\n}\n", ""]);
+exports.push([module.i, "\n.piecebg[data-v-14e36024]{\r\n  opacity: 0.35;\n}\r\n", ""]);
 
 
 /***/ }),
